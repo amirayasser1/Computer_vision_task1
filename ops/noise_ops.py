@@ -1,8 +1,11 @@
+"""Noise generation utilities using OpenCV random generators."""
+
 import cv2
 import numpy as np
 
 
 def add_uniform_noise(image: np.ndarray, low: int, high: int) -> np.ndarray:
+    # Add uniform noise in the range [low, high].
     base = image.astype(np.int16)
     noise = np.empty(image.shape, dtype=np.int16)
     cv2.randu(noise, low, high + 1)
@@ -11,6 +14,7 @@ def add_uniform_noise(image: np.ndarray, low: int, high: int) -> np.ndarray:
 
 
 def add_gaussian_noise(image: np.ndarray, mean: float, sigma: float) -> np.ndarray:
+    # Add Gaussian noise with given mean and sigma.
     base = image.astype(np.float32)
     noise = np.empty(image.shape, dtype=np.float32)
     cv2.randn(noise, mean, sigma)
@@ -19,6 +23,7 @@ def add_gaussian_noise(image: np.ndarray, mean: float, sigma: float) -> np.ndarr
 
 
 def add_salt_pepper_noise(image: np.ndarray, amount: float, salt_vs_pepper: float) -> np.ndarray:
+    # Add salt and pepper impulses with ratio control.
     noisy = image.copy()
     if amount <= 0.0:
         return noisy
@@ -27,6 +32,7 @@ def add_salt_pepper_noise(image: np.ndarray, amount: float, salt_vs_pepper: floa
     rnd = np.empty((height, width), dtype=np.float32)
     cv2.randu(rnd, 0.0, 1.0)
 
+    # Build a single random map and split it into salt and pepper masks.
     salt_thresh = amount * salt_vs_pepper
     salt_mask = cv2.compare(rnd, salt_thresh, cv2.CMP_LT)
     pepper_mask = cv2.compare(rnd, amount, cv2.CMP_LT)

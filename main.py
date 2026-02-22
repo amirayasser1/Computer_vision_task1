@@ -1,3 +1,5 @@
+"""PyQt GUI."""
+
 import sys
 
 import cv2
@@ -11,6 +13,7 @@ from ops.noise_ops import add_gaussian_noise, add_salt_pepper_noise, add_uniform
 
 
 class ImagePanel(QtWidgets.QLabel):
+    # Simple image preview widget.
     def __init__(self, title: str, parent=None) -> None:
         super().__init__(parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
@@ -20,6 +23,7 @@ class ImagePanel(QtWidgets.QLabel):
         self._image = None
 
     def set_image(self, image: np.ndarray) -> None:
+        # Convert NumPy image to QPixmap and render it.
         if image is None:
             self.setText("(no preview)")
             self.setPixmap(QtGui.QPixmap())
@@ -39,12 +43,14 @@ class ImagePanel(QtWidgets.QLabel):
         self.setPixmap(pixmap.scaled(self.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
 
     def resizeEvent(self, event) -> None:
+        # Re-scale preview when the widget size changes.
         if self._image is not None:
             self.set_image(self._image)
         super().resizeEvent(event)
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    # Main application window with tabs for each task stage.
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Computer Vision Task 1")
@@ -52,6 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(1200, 720)
         self.setStyleSheet(self._build_theme())
 
+        # Cached images for each stage in the pipeline.
         self.original_bgr = None
         self.gray = None
         self.noisy = None
@@ -66,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._build_tab_edges()
 
     def _build_tab_load(self) -> None:
+        # Build the Load tab UI.
         widget = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(widget)
 
@@ -103,6 +111,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabs.addTab(widget, "Load")
 
     def _build_tab_noise(self) -> None:
+        # Build the Noise tab UI.
         widget = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(widget)
 
@@ -158,6 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_noise_controls()
 
     def _build_tab_filters(self) -> None:
+        # Build the Filters tab UI.
         widget = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(widget)
 
@@ -203,6 +213,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_filter_controls()
 
     def _build_tab_edges(self) -> None:
+        # Build the Edges tab UI.
         widget = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(widget)
 
@@ -248,6 +259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_edge_controls()
 
     def open_image(self) -> None:
+        # Load image from disk and reset the pipeline state.
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self, "Open image", "", "Images (*.png *.jpg *.jpeg *.bmp *.tif *.tiff)"
         )
@@ -265,6 +277,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.filter_source_status.setText("Noisy image: not available")
 
     def save_edited(self) -> None:
+        # Save the selected output image to disk.
         image = self._get_save_source()
         if image is None:
             QtWidgets.QMessageBox.information(self, "Save image", "Selected image is not available yet.")
@@ -284,6 +297,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Save image", "Failed to save image. Check the file path.")
 
     def _get_save_source(self) -> np.ndarray | None:
+        # Resolve which image to save based on the dropdown.
         choice = self.save_target.currentText()
         if choice.startswith("Gray"):
             return self.gray
@@ -302,6 +316,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return None
 
     def _update_noise_controls(self) -> None:
+        # Enable only the parameters used by the selected noise type.
         is_uniform = self.noise_type.currentText() == "Uniform"
         is_gauss = self.noise_type.currentText() == "Gaussian"
         is_sp = self.noise_type.currentText() == "Salt & Pepper"
@@ -314,10 +329,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_control_enabled(self.sp_ratio, is_sp, "Used only for Salt & Pepper noise")
 
     def _update_filter_controls(self) -> None:
+        # Enable only the parameters used by the selected filter type.
         is_gauss = self.filter_type.currentText() == "Gaussian"
         self._set_control_enabled(self.filter_sigma, is_gauss, "Used only for Gaussian filter")
 
     def _update_edge_controls(self) -> None:
+        # Enable only the parameters used by the selected edge detector.
         is_sobel = self.edge_type.currentText() == "Sobel"
         is_canny = self.edge_type.currentText() == "Canny"
         self._set_control_enabled(self.sobel_ksize, is_sobel, "Used only for Sobel")
@@ -325,6 +342,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_control_enabled(self.canny_high, is_canny, "Used only for Canny")
 
     def apply_noise(self) -> None:
+        # Apply noise to the original image.
         if self.original_bgr is None:
             return
         if self.noise_type.currentText() == "Uniform":
@@ -341,6 +359,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.filter_source_status.setText("Noisy image: available")
 
     def apply_filter(self) -> None:
+        # Apply the selected filter to original or noisy image.
         if self.original_bgr is None:
             return
         if self.filter_source.currentText().startswith("Noisy") and self.noisy is not None:
@@ -357,6 +376,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.panel_filtered.set_image(self.filtered)
 
     def apply_edges(self) -> None:
+        # Compute edges from the current source image.
         if self.original_bgr is None:
             return
         source = self.filtered if self.filtered is not None else self.original_bgr
@@ -379,6 +399,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.panel_edge_y.set_image(gy)
             self.panel_edge_mag.set_image(mag)
         else:
+            # Canny is OpenCV-only; preview only the final edge map.
             edges = edge_canny(gray, self.canny_low.value(), self.canny_high.value())
             self.panel_edge_x.set_image(None)
             self.panel_edge_y.set_image(None)
@@ -386,12 +407,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @staticmethod
     def _odd_ksize(value: int) -> int:
+        # Ensure kernel size is odd.
         if value % 2 == 0:
             return value + 1
         return value
 
     @staticmethod
     def _set_control_enabled(widget: QtWidgets.QWidget, enabled: bool, hint: str) -> None:
+        # Apply enabled state and visual hint for inactive controls.
         widget.setEnabled(enabled)
         widget.setToolTip(hint)
         if enabled:
@@ -401,6 +424,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @staticmethod
     def _build_theme() -> str:
+        # Return the app stylesheet.
         return (
             "QWidget{background:#f3efe8;color:#2b2b2b;font-size:14px;}"
             "QTabWidget::pane{border:1px solid #d0c7b8;border-radius:8px;padding:6px;background:#f9f5ef;}"
@@ -417,6 +441,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 def main() -> None:
+    # App entry point.
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
