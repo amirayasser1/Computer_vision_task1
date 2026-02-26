@@ -1,4 +1,21 @@
-.venv
-.vscode
-__pycache__
+# Ignore virtual environment
+venv/
+.venv/
+env/
+
+# Ignore Python cache
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Ignore environment variables
+.env
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

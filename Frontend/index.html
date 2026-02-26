@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>ImagePro · spatial & frequency domain playground</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <!-- Primary keywords: image processing, spatial filtering, frequency domain, hybrid images -->
+    <meta content="image processing system, spatial filtering from scratch, frequency domain filters, hybrid image, histogram equalization, Canny edge, Sobel, Roberts, Prewitt, OpenCV" name="keywords" />
+    <meta content="Interactive image processing lab – noise addition, manual spatial filters, edge detection (Sobel, Roberts, Prewitt, Canny), histogram & CDF, frequency domain filtering, hybrid image creation." name="description" />
+
+    <!-- Google Web Fonts (preserved) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira:wght@500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet (keep same style to maintain look) -->
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+        /* tiny tweaks to highlight image-processing terminology */
+        .bg-soft-primary { background-color: #e6f4ff; }
+        .filter-badge {
+            background: #000023; color: #01c4ff; font-family: monospace; border-radius: 20px; padding: 0.2rem 1rem; display: inline-block;
+        }
+        .feature-icon { font-size: 2.5rem; color: #01c4ff; }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Start (same structure, adapted titles) -->
+    <div class="container-fluid" style="background-color: #000023">
+        <div class="container">
+            <nav class="navbar navbar-dark navbar-expand-lg py-1">
+                <a href="index.html" class="navbar-brand">
+                    <img src="img/logo-cv.png" alt="ImagePro Logo" class="img-fluid" style="height: 50px;" onerror="this.style.display='none'">
+                    
+                </a>
+                <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse bg-transparent" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto mx-xl-auto p-0">
+                        <a href="index.html" class="nav-item nav-link active text-secondary">Home</a>
+                        <a href="operation.html" class="nav-item nav-link">Operations Lab</a>
+                        <a href="project.html" class="nav-item nav-link">Demos</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Documentation</a>
+                            <div class="dropdown-menu rounded">
+                                <a href="#" class="dropdown-item">Spatial Filters</a>
+                                <a href="#" class="dropdown-item">Edge Detection</a>
+                                <a href="#" class="dropdown-item">Frequency Domain</a>
+                                <a href="#" class="dropdown-item">Hybrid Images</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Carousel Start – adapted to image processing message -->
+    <div class="container-fluid px-0">
+        <div id="carouselId" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" role="listbox">
+                <div class="carousel-item active">
+                    <img src="img/home.jpg" class="img-fluid" alt="frequency spectrum" onerror="this.src='https://via.placeholder.com/1600x600?text=Frequency+Domain'">
+                    <div class="carousel-caption">
+                        <div class="container carousel-content">
+                            
+                            <h1 class="text-white display-1 mb-4 animated fadeInRight">Image Processing Lab <br>Unlock the Power of Pixels</h1>
+                           
+                            <a href="#" class="me-2"><button type="button" class="px-4 py-sm-3 px-sm-5 btn btn-primary rounded-pill carousel-content-btn1 animated fadeInLeft">Launch demo</button></a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- Carousel End -->
+
+    <!-- Fact Start – redefined as key parameter ranges (valid ranges, etc) -->
+    <div class="container-fluid  py-5" style="background-color: #000023;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-6 wow fadeIn" data-wow-delay=".1s">
+                    <div class="d-flex counter">
+                        <h1 class="me-3 text-primary counter-value">3</h1>
+                        <h5 class="text-white mt-1">noise types : Gauss, uniform, salt&pepper </h5>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 wow fadeIn" data-wow-delay=".3s">
+                    <div class="d-flex counter">
+                        <h1 class="me-3 text-primary counter-value">11</h1>
+                        <h5 class="text-white mt-1">max kernel size · average / Gaussian / median</h5>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 wow fadeIn" data-wow-delay=".5s">
+                    <div class="d-flex counter">
+                        <h1 class="me-3 text-primary counter-value">4</h1>
+                        <h5 class="text-white mt-1">edge detectors: Sobel, Roberts, Prewitt, Canny</h5>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 wow fadeIn" data-wow-delay=".7s">
+                    <div class="d-flex counter">
+                        <h1 class="me-3 text-primary counter-value">3</h1>
+                        <h5 class="text-white mt-1">hybrid images: low · high · final composition</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fact End -->
+
+    <!-- About Start – adapted to "system design" description -->
+    <div class="container-fluid py-5 my-5">
+        <div class="container pt-5">
+            <div class="row g-5">
+                <div class="col-lg-5 col-md-6 col-sm-12 wow fadeIn" data-wow-delay=".3s">
+                    <div class="h-100 position-relative">
+                        <img src="img/photo-01.jpg" class="img-fluid w-75 rounded" alt="" style="margin-bottom: 25%;" onerror="this.src='https://via.placeholder.com/400x300?text=original+image'">
+                        <div class="position-absolute w-75" style="top: 25%; left: 25%;">
+                            <img src="img/photo-02.jpg" class="img-fluid w-100 rounded" alt="" onerror="this.src='https://via.placeholder.com/400x300?text=working+copy'">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6 col-sm-12 wow fadeIn" data-wow-delay=".5s">
+                    <h5 class="text-primary">architecture</h5>
+                    <h1 class="mb-4">original image · working copy · undo without reload</h1>
+                    <p class="fw-bold"><i class="fas fa-check-circle text-primary me-2"></i> Image read once – stored as original (unchanged) and working copy.</p>
+                    <p><i class="fas fa-check-circle text-primary me-2"></i> All operations affect only the working copy. Undo reverts to original without re‑reading.</p>
+                    <p><i class="fas fa-check-circle text-primary me-2"></i> Noise addition: Gaussian (mean, variance clipped), uniform (low/high), salt & pepper (ratio). Parameters restricted to reasonable intervals. Applied only once – no stacking.</p>
+                    <p><i class="fas fa-check-circle text-primary me-2"></i> <strong>Spatial filtering from scratch:</strong> average, Gaussian, median — kernel size odd 3–11, user controlled.</p>
+                    <p><i class="fas fa-check-circle text-primary me-2"></i> <strong>Edge detection (manual):</strong> Sobel, Roberts, Prewitt – gradient magnitude. Canny via OpenCV allowed.</p>
+                    <p><i class="fas fa-check-circle text-primary me-2"></i> Histogram + distribution curve + CDF (cumulative max = 1 after normalization). Per‑channel RGB histograms.</p>
+                    <p><i class="fas fa-check-circle text-primary me-2"></i> Frequency domain: FFT → low/high‑pass → IFFT. Hybrid image = low-freq (filtered) + high-freq (original – low) and displayed.</p>
+                    <a href="#" class="btn btn-primary rounded-pill px-5 py-3 text-white">explore all operations</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+
+    <!-- Services Start – now representing the main image processing modules -->
+    <div class="container-fluid services py-5 mb-5">
+        <div class="container">
+            <div class="text-center mx-auto pb-5 wow fadeIn" data-wow-delay=".3s" style="max-width: 600px;">
+                <h5 class="text-primary">The playground of</h5>
+                <h2>Operations</h2>
+            </div>
+            <div class="row g-5 services-inner">
+                <!-- noise card -->
+                <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay=".3s">
+                    <div class="services-item bg-light">
+                        <div class="p-4 text-center services-content">
+                            <div class="services-content-icon">
+                                <i class="fas fa-random feature-icon mb-4"></i>
+                                <h4 class="mb-3">Noise addition</h4>
+                                <p class="mb-4">Gaussian (μ,σ²), uniform [a,b], salt & pepper (ratio). Parameters bounded. <strong>Applied once</strong>, undo available.</p>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- lowpass card -->
+                <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay=".5s">
+                    <div class="services-item bg-light">
+                        <div class="p-4 text-center services-content">
+                            <div class="services-content-icon">
+                                <i class="fas fa-window-minimize feature-icon mb-4"></i>
+                                <h4 class="mb-3">Low‑pass filters</h4>
+                                <p class="mb-4">Average, Gaussian, median — all from scratch. Kernel size: odd 3..11 (user choice). No OpenCV filtering.</p>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- edge detection card -->
+                <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay=".7s">
+                    <div class="services-item bg-light">
+                        <div class="p-4 text-center services-content">
+                            <div class="services-content-icon">
+                                <i class="fas fa-border-all feature-icon mb-4"></i>
+                                <h4 class="mb-3">Edge detection</h4>
+                                <p class="mb-4">Sobel, Roberts, Prewitt (gradient magnitude, scratch). Canny via OpenCV. Full gradient display.</p>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- histogram card -->
+                <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay=".3s">
+                    <div class="services-item bg-light">
+                        <div class="p-4 text-center services-content">
+                            <div class="services-content-icon">
+                                <i class="fas fa-chart-bar feature-icon mb-4"></i>
+                                <h4 class="mb-3">Histogram & CDF</h4>
+                                <p class="mb-4">Draw histogram + distribution curve + cumulative function. After normalization CDF reaches 1. RGB channel plots.</p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- frequency card -->
+                <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay=".5s">
+                    <div class="services-item bg-light">
+                        <div class="p-4 text-center services-content">
+                            <div class="services-content-icon">
+                                <i class="fas fa-wave-square feature-icon mb-4"></i>
+                                <h4 class="mb-3">Frequency domain</h4>
+                                <p class="mb-4">FFT → low‑pass / high‑pass filters → inverse FFT. Visualise filtered image.</p>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- hybrid image card -->
+                <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay=".7s">
+                    <div class="services-item bg-light">
+                        <div class="p-4 text-center services-content">
+                            <div class="services-content-icon">
+                                <i class="fas fa-blender-phone feature-icon mb-4"></i>
+                                <h4 class="mb-3">Hybrid image</h4>
+                                <p class="mb-4">Combine low‑frequency (strong LPF) and high‑frequency (original – low) into one hybrid. Display all three.</p>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Services End -->
+
+
+    <!-- Footer Start – adapted contact and about for image processing lab -->
+    <div class="container-fluid footer bg-dark wow fadeIn" data-wow-delay=".3s">
+        <div class="container pt-5 pb-4">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                      <a href="index.html" class="navbar-brand">
+                    <img src="img/logo-cv.png" alt="ImagePro Logo" class="img-fluid" style="height: 50px;" onerror="this.style.display='none'">
+                    
+                </a>
+                    <p class="mt-4 text-light">interactive image processing system – spatial & frequency domain. Read image once, work on copy. Full parameter ranges, no built‑in filters except where noted.</p>
+                    <div class="d-flex hightech-link">
+                        <a href="" class="btn-light nav-fill btn btn-square rounded-circle me-2"><i class="fab fa-github text-primary"></i></a>
+                        <a href="" class="btn-light nav-fill btn btn-square rounded-circle me-0"><i class="fab fa-python text-primary"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="#" class="h3 text-secondary">core modules</a>
+                    <div class="mt-4 d-flex flex-column short-link">
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>Noise (Gauss/uniform/s&p)</a>
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>Spatial low‑pass filters</a>
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>Edge (Sobel,Roberts,Prewitt)</a>
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>Canny (OpenCV)</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="#" class="h3 text-secondary">more</a>
+                    <div class="mt-4 d-flex flex-column help-link">
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>histogram + CDF / equalization</a>
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>frequency domain filters</a>
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>hybrid image (low+high)</a>
+                        <a href="#" class="mb-2 text-white"><i class="fas fa-angle-right text-secondary me-2"></i>per‑channel RGB histograms</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="#" class="h3 text-secondary">parameter ranges</a>
+                    <div class="text-white mt-4 d-flex flex-column contact-link">
+                        <p class="text-light border-bottom border-primary pb-2"><i class="fas fa-check-circle text-secondary me-2"></i>noise mean: 0–100, variance >0</p>
+                        <p class="text-light border-bottom border-primary pb-2"><i class="fas fa-check-circle text-secondary me-2"></i>kernel size: odd 3–11</p>
+                        
+                    </div>
+                </div>
+            </div>
+            <hr class="text-light mt-5 mb-4" />
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <span class="text-light"> All operations preserve original, modify working copy. </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-secondary btn-square rounded-circle back-to-top"><i class="fa fa-arrow-up text-white"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+</html>
