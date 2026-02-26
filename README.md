@@ -1,22 +1,34 @@
 # Image Processing Web Application
 
-## 📋 Overview
+###  Overview
 ImagePro is a comprehensive web-based image processing application built with FastAPI backend and vanilla JavaScript frontend. It implements various image processing operations from scratch, including noise addition, spatial filtering, edge detection, histogram analysis, frequency domain filtering, and hybrid image creation.
 
 ---
+###  Home Page  
 
-## 🚀 Quick Start Guide
+![Home Page Screenshot](Home_page_UI.png)
 
-### 📌 Prerequisites
+---
+
+###  Operations UI  
+
+![Operations UI Screenshot](operation_UI.png)
+
+---
+
+
+##  Quick Start Guide
+
+### Prerequisites
 - Python 3.8 or higher  
 - pip (Python package installer)  
 - Modern web browser (Chrome, Firefox, Edge, etc.)
 
 ---
 
-## ⚙️ Setup Instructions
+##  Setup Instructions
 
-### 🖥️ Windows
+###  Windows
 
 ```bash
 # Navigate to project root
@@ -34,7 +46,7 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Run the Application
+##  Run the Application
 
 After activating the virtual environment, start the FastAPI server using Uvicorn:
 
@@ -42,7 +54,7 @@ After activating the virtual environment, start the FastAPI server using Uvicorn
 uvicorn main:app --reload
 ```
 
-### 🔎 Command Explanation
+###  Command Explanation
 - `main` → Name of the backend file (main.py)
 - `app` → FastAPI instance inside main.py
 - `--reload` → Automatically reloads the server when code changes (development mode)
@@ -61,7 +73,7 @@ http://127.0.0.1:8000
 
 ---
 
-## 🛠️ If Uvicorn Is Not Installed
+##  If Uvicorn Is Not Installed
 
 Install it manually:
 
