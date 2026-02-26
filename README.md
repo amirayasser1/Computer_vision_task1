@@ -6,13 +6,17 @@ ImagePro is a comprehensive web-based image processing application built with Fa
 ---
 ###  Home Page  
 
-![Home Page Screenshot](Home_page_UI.png)
+<p align="center">
+  <img src="Home_page_UI.png" width="800">
+</p>
 
 ---
 
 ###  Operations UI  
 
-![Operations UI Screenshot](operation_UI.png)
+<p align="center">
+  <img src="operation_UI.png" width="800">
+</p>
 
 ---
 
