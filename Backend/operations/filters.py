@@ -95,3 +95,40 @@ def convolve2d_single_channel(image, kernel, pad):
             result[i, j] = np.sum(region * kernel)
     
     return result
+
+#--------------------------------------------------------------- Ready to use with openCv
+
+# def apply_average_filter(image, kernel_size=3):
+#     """
+#     Apply average (mean) filter using OpenCV
+#     """
+#     # Ensure kernel size is odd (required by OpenCV functions)
+#     if kernel_size % 2 == 0:
+#         kernel_size += 1  # Increment by 1 if even
+#     
+#     # cv2.blur(image, (k, k)) computes the mean of the k x k neighborhood
+#     return cv2.blur(image, (kernel_size, kernel_size))
+
+
+# def apply_gaussian_filter(image, kernel_size=3, sigma=1.0):
+#     """
+#     Apply Gaussian filter using OpenCV
+#     """
+#     # Ensure kernel size is odd
+#     if kernel_size % 2 == 0:
+#         kernel_size += 1
+#     
+#     # cv2.GaussianBlur(image, (k, k), sigmaX, sigmaY)
+#     return cv2.GaussianBlur(image, (kernel_size, kernel_size), sigmaX=sigma, sigmaY=sigma)
+
+
+# def apply_median_filter(image, kernel_size=3):
+#     """
+#     Apply median filter using OpenCV
+#     """
+#     # Ensure kernel size is odd
+#     if kernel_size % 2 == 0:
+#         kernel_size += 1
+#     
+#     # cv2.medianBlur(image, k) computes the median of the k x k neighborhood
+#     return cv2.medianBlur(image, kernel_size)
