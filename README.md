@@ -1,6 +1,6 @@
 <div align="center">
 
-# <img src="Frontend/img/logo-cv.png" width="50" alt="ImagePro Home Page"> ImagePro
+# <img src="Frontend/img/logo-cv.png" width="50" alt="ImagePro Logo"> ImagePro
 
 ### Real-Time Image Processing Web Application
 
@@ -13,21 +13,21 @@
 
 ---
 
-**ImagePro** is a full-stack, interactive web application that brings core computer vision algorithms to life. Built with a **FastAPI** backend and a **vanilla JavaScript** frontend, it lets users upload images, apply a wide range of processing operations in real time, and instantly visualize the results — all through a polished, modern UI.
+**ImagePro** is a full-stack web application for interactive image processing. Built with a **FastAPI** backend and a **vanilla JavaScript** frontend, it lets users upload images, apply various processing operations in real time, and instantly visualize the results — all through a clean, modern interface.
 
-What makes this project unique is that **nearly every algorithm is implemented from scratch** using raw NumPy and SciPy operations — no black-box OpenCV calls for the core processing. This makes the codebase an excellent learning resource for anyone studying computer vision fundamentals.
+The edge detection module (Sobel, Roberts, Prewitt) features **custom kernel-based implementations built from scratch**, while other operations leverage established libraries like OpenCV, SciPy, and Matplotlib for reliability and performance.
 
-[Getting Started](#-quick-start) · [ Features](#-features--demos) · [ API Reference](#-api-endpoints) · [ Project Structure](#-project-structure)
+[Getting Started](#quick-start) · [Features](#features--demos) · [Project Structure](#project-structure)
 
 </div>
 
 ---
 
-##  Application Preview
+## Application Preview
 
 ### Home Page
 
-The landing page features a modern, responsive design with animated sections, a feature overview, and a team carousel. It introduces users to the application and its capabilities before they dive into the processing workspace.
+A responsive landing page with animated sections, feature overview cards, and a team carousel.
 
 <p align="center">
   <img src="assets/home_page.png" width="900" alt="ImagePro Home Page">
@@ -35,12 +35,12 @@ The landing page features a modern, responsive design with animated sections, a 
 
 ---
 
-###  Operations Workspace
+### Operations Workspace
 
-The operations page is the heart of the application — a split-panel workspace where the **original image** and the **processed result** are displayed side by side. A tabbed control panel on the left lets users switch between operation categories, adjust parameters through sliders and dropdowns, and apply transformations with a single click. Every operation supports **undo** and **reset**, so users can freely experiment without losing their original image.
+Split-panel workspace with original and processed images side by side. A tabbed control panel lets users switch operations, adjust parameters, and apply transformations with undo/reset support.
 
 <p align="center">
-  <img src="assets/operations_page.png" width="900" alt="Operations Page — Active State">
+  <img src="assets/operations_page.png" width="900" alt="Operations Page">
 </p>
 
 <p align="center">
@@ -49,169 +49,157 @@ The operations page is the heart of the application — a split-panel workspace 
 
 ---
 
-##  Features & Demos
-
-ImagePro covers the full spectrum of classical image processing, organized into seven operation categories. Each section below explains **what the operation does**, **why it's useful**, and **how it's implemented** under the hood.
+## Features & Demos
 
 ---
 
-###  1. Noise Generation
+### 1. Noise Generation
 
-> **What it does:** Artificially degrades an image by injecting random disturbances into pixel values.
+Adds artificial noise to images, useful for testing denoising algorithms.
 
-Noise simulation is a fundamental step in computer vision research — you need noisy images to develop and test denoising algorithms. ImagePro supports three noise models:
+- **Gaussian** — random values from a normal distribution, controlled by `mean` and `sigma`
+- **Uniform** — equally distributed random values within a range
+- **Salt & Pepper** — randomly sets pixels to pure white or pure black, controlled by `ratio`
 
-| Noise Type         | Description                                                                                                          |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| **Gaussian**       | Adds random values drawn from a normal (bell-curve) distribution. Controlled by `mean` and `sigma` (spread). Simulates sensor noise in cameras. |
-| **Uniform**        | Adds random values where every value in a range is equally likely. Produces a more "flat" distortion compared to Gaussian. |
-| **Salt & Pepper**  | Randomly flips pixels to pure **white (255)** or pure **black (0)**. Simulates transmission errors or dead pixels. Controlled by a `ratio` parameter. |
-
-All three noise functions are **implemented from scratch** using `numpy.random`.
+> Uses `numpy.random` for noise generation with OpenCV for image handling.
 
 <p align="center">
-  <img src="assets/salt_pepper_noise.png" width="800" alt="Salt & Pepper Noise Applied">
+  <img src="assets/salt_pepper_noise.png" width="800" alt="Salt and Pepper Noise">
 </p>
-
-<p align="center"><em>Salt & Pepper noise applied to a test image — white and black pixels are randomly scattered across the image.</em></p>
 
 ---
 
-###  2. Spatial Filters
+### 2. Spatial Filters
 
-> **What it does:** Smooths, blurs, or denoises images by sliding a small window (kernel) across every pixel and computing a new value from its neighbors.
+Smooths and denoises images using windowed filtering operations.
 
-Spatial filtering is the backbone of image preprocessing. ImagePro implements **manual 2D convolution from scratch** — no `cv2.filter2D` calls. The custom `convolve2d_manual()` function handles zero-padding, kernel sliding, and multi-channel (RGB) processing.
+- **Average** — replaces each pixel with the mean of its neighbors (`cv2.blur`)
+- **Gaussian** — weighted mean with a bell-curve kernel (`cv2.GaussianBlur`)
+- **Median** — replaces each pixel with the median of its neighbors (`cv2.medianBlur`), excellent for removing salt & pepper noise
 
-| Filter Type    | Kernel Strategy                                                                                                    | Best For                        |
-| -------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
-| **Average**    | All kernel weights are equal (e.g., each = 1/9 for a 3×3 kernel). Each pixel becomes the mean of its neighbors.    | General smoothing               |
-| **Gaussian**   | Kernel weights follow a bell curve — center pixels contribute more, edges contribute less. Controlled by `sigma`.   | Noise reduction while preserving edges |
-| **Median**     | Sorts all neighbor values and picks the middle one. A **non-linear** filter (no multiplication/summation).           | Removing salt & pepper noise    |
-
-Users can adjust the **kernel size** (3×3, 5×5, 7×7, etc.) to control filter strength.
+> Adjustable **kernel size** (3×3, 5×5, 7×7, etc.) controls filter strength.
 
 <p align="center">
-  <img src="assets/median_filter.png" width="800" alt="Median Filter Applied">
+  <img src="assets/median_filter.png" width="800" alt="Median Filter">
 </p>
-
-<p align="center"><em>Median filter effectively removes salt & pepper noise while keeping edges sharp — the gold standard for impulse noise removal.</em></p>
 
 ---
 
-###  3. Edge Detection
+### 3. Edge Detection
 
-> **What it does:** Identifies boundaries in images where brightness changes rapidly — revealing the outlines and structure of objects.
+Identifies object boundaries where brightness changes sharply.
 
-Edge detection is arguably the most visually striking operation in computer vision. ImagePro implements **four different edge detection algorithms**, three of which are built entirely from scratch:
+- **Sobel** — ⚡ **from scratch** — uses hand-built 3×3 weighted kernels with custom convolution to detect horizontal and vertical edges. Returns magnitude + X/Y gradient maps.
+- **Roberts** — ⚡ **from scratch** — uses hand-built 2×2 diagonal kernels with custom convolution. Fastest but most noise-sensitive.
+- **Prewitt** — ⚡ **from scratch** — uses hand-built 3×3 equal-weight kernels with custom convolution. Similar to Sobel but without center emphasis.
+- **Canny** — multi-stage pipeline via `cv2.Canny` with adjustable thresholds for clean, 1-pixel-wide edges.
 
-| Algorithm    | Kernel Size | Implementation | Description                                                                                      |
-| ------------ | ----------- | -------------- | ------------------------------------------------------------------------------------------------ |
-| **Sobel**    | 3×3         | From scratch   | Uses weighted horizontal/vertical kernels. The center row/column gets double weight, making it more robust to noise than Prewitt. Returns magnitude + X/Y gradient maps. |
-| **Roberts**  | 2×2         | From scratch   | Uses the smallest possible kernels to detect edges along **diagonal** directions. Fastest but most noise-sensitive. |
-| **Prewitt**  | 3×3         | From scratch   | Similar to Sobel but with **equal weights** — no center emphasis. Good baseline comparison.        |
-| **Canny**    | —           | OpenCV         | A multi-stage pipeline: Gaussian blur → gradient computation → non-maximum suppression → double thresholding → hysteresis tracking. Produces clean, 1-pixel-wide edges. Controlled by two threshold parameters. |
-
-For Sobel, Roberts, and Prewitt, the app returns **three images**: the combined edge magnitude, the horizontal gradient (grad_x), and the vertical gradient (grad_y), giving users full visibility into how direction-specific edge responses combine.
+> The custom `convolve2d_edge()` function handles the convolution for Sobel, Roberts, and Prewitt using `cv2.filter2D` with the manually defined kernels.
 
 <p align="center">
   <img src="assets/canny_edge.png" width="800" alt="Canny Edge Detection">
 </p>
 
-<p align="center"><em>Canny edge detection — produces clean, thin edges with adjustable sensitivity via the two threshold sliders.</em></p>
-
 ---
 
-###  4. Histogram Analysis & Visualization
+### 4. Histogram Analysis & Visualization
 
-> **What it does:** Computes and displays the distribution of pixel intensities in an image — a fundamental tool for understanding image exposure, contrast, and color balance.
+Computes and displays pixel intensity distributions — essential for understanding exposure and contrast.
 
-A histogram is essentially a bar chart showing **how many pixels have each brightness level** (0 = black, 255 = white). ImagePro provides two histogram modes:
+- **Grayscale** — histogram + CDF (Cumulative Distribution Function) curve
+- **RGB** — individual R, G, B channel histograms + combined overlay
 
-| Mode          | What It Shows                                                                                                     |
-| ------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Grayscale** | Single histogram of luminance values + the **Cumulative Distribution Function (CDF)** curve, which shows the running percentage of pixels at or below each intensity level. |
-| **RGB**       | Four-panel display: individual histograms for each color channel (**Red**, **Green**, **Blue**) + a combined overlay showing all three channels on one axis. |
-
-Both the histogram computation and the CDF calculation are **implemented from scratch** using NumPy. The visualizations are rendered with Matplotlib and sent to the frontend as base64-encoded images.
+> Uses `cv2.calcHist` for computation and Matplotlib for visualization, rendered as base64 images.
 
 <p align="center">
   <img src="assets/histogram_gray.png" width="800" alt="Grayscale Histogram">
 </p>
 
-<p align="center"><em>Grayscale histogram — the bar chart reveals the intensity distribution, while the CDF curve shows cumulative pixel density.</em></p>
-
 <p align="center">
   <img src="assets/histogram_gray_eq.png" width="800" alt="Grayscale Histogram After Equalization">
 </p>
-
-<p align="center"><em>After histogram equalization — the distribution is spread more evenly across the full 0–255 range, producing improved contrast.</em></p>
 
 <p align="center">
   <img src="assets/histogram_rgb_eq.png" width="800" alt="RGB Histogram After Equalization">
 </p>
 
-<p align="center"><em>RGB histogram equalization — each color channel's distribution is visualized independently after enhancement.</em></p>
-
 ---
 
-###  5. Image Enhancement
+### 5. Image Enhancement
 
-> **What it does:** Improves the visual quality and contrast of images through pixel-value transformations.
+Improves visual quality through pixel-value transformations.
 
-| Technique              | Description                                                                                                               |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **Histogram Equalization** | Redistributes pixel intensities so that the histogram becomes approximately uniform. Dark images become brighter, washed-out images gain contrast. For color images, only the luminance (Y) channel in YUV space is equalized, preserving original colors. |
-| **Normalization**      | Linearly scales all pixel values to fill a target range (0–1 or 0–255). If the darkest pixel is 50 and the brightest is 200, normalization stretches them to span the full range. Supports two output range modes. |
-| **Grayscale Conversion** | Converts color images to grayscale using the perceptual luminance formula: `0.299·R + 0.587·G + 0.114·B`. The weights reflect human eye sensitivity — we perceive green as brightest, then red, then blue. |
+- **Histogram Equalization** — spreads pixel intensities evenly across 0–255 for better contrast (`cv2.equalizeHist`). For color images, only the Y channel in YUV space is equalized to preserve colors.
+- **Normalization** — linearly scales pixel values to fill a target range (0–1 or 0–255)
+- **Grayscale Conversion** — converts color images using the perceptual luminance formula: `0.299·R + 0.587·G + 0.114·B`
 
 ---
 
 ### 6. Frequency Domain Filtering
 
-> **What it does:** Transforms the image into the frequency domain using the **Fast Fourier Transform (FFT)**, applies a circular filter mask, and converts back — enabling powerful global operations that are difficult to achieve in the spatial domain.
+Transforms images to the frequency domain using **FFT** (via SciPy's `fftpack`), applies a circular mask, and converts back.
 
-Every image is a mix of **low frequencies** (smooth gradients, large shapes) and **high frequencies** (sharp edges, fine textures, noise). The FFT lets us separate and manipulate these components independently.
+- **Low-pass** — keeps frequencies below `cutoff`, producing a blurred result
+- **High-pass** — keeps frequencies above `cutoff`, isolating edges and textures
 
-| Filter Type   | What It Keeps              | Visual Effect                              | Use Case                        |
-| ------------- | -------------------------- | ------------------------------------------ | ------------------------------- |
-| **Low-pass**  | Frequencies below `cutoff` | Image becomes **blurry** — edges disappear | Noise reduction, smoothing      |
-| **High-pass** | Frequencies above `cutoff` | Only **edges and textures** remain         | Edge enhancement, sharpening    |
-
-The `cutoff` slider controls the radius of the circular mask — a smaller radius means more aggressive filtering. The app also generates a **3-panel frequency visualization** showing the original spectrum, the applied mask, and the filtered spectrum.
+> Includes a 3-panel visualization showing the original spectrum, the filter mask, and the filtered spectrum. Processes all three RGB channels independently.
 
 <p align="center">
   <img src="assets/frequency_filter.png" width="800" alt="Frequency Domain Filtering">
 </p>
 
-<p align="center"><em>Frequency domain filtering — the spectrum visualization (bottom) shows the original FFT magnitude, the circular filter mask, and the resulting filtered spectrum.</em></p>
+---
+
+### 7. Hybrid Image Creation
+
+Combines the **low frequencies** of one image with the **high frequencies** of another using FFT (SciPy). The result looks like one image up close and a different image from far away — exploiting how human vision prioritizes different frequency ranges at different distances.
 
 ---
 
-###  7. Hybrid Image Creation
+## Project Structure
 
-> **What it does:** Combines the **low-frequency content** of one image with the **high-frequency content** of another to create a single image that looks different depending on viewing distance.
-
-This is one of the most fascinating operations in the app. Hybrid images exploit how human vision works:
-
-- **Up close**, our eyes resolve fine details (high frequencies) — so you see image #2
-- **From far away**, our eyes only perceive broad shapes (low frequencies) — so you see image #1
-
-The implementation extracts low frequencies from image 1 and high frequencies from image 2 using FFT, then blends them with `cv2.addWeighted()`. Two separate `cutoff` sliders let users independently control how much of each image contributes.
+```
+Computer_vision_task1/
+│
+├── Backend/
+│   ├── main.py                  # FastAPI server & API routes
+│   └── operations/
+│       ├── noise.py             # Gaussian, Uniform, Salt & Pepper noise
+│       ├── filters.py           # Average, Gaussian, Median filters (OpenCV)
+│       ├── edge_detection.py    # Sobel, Roberts, Prewitt (from scratch) + Canny
+│       ├── histogram.py         # Histogram & CDF computation (OpenCV + Matplotlib)
+│       ├── enhancement.py       # Equalization, normalization (OpenCV)
+│       ├── frequency.py         # FFT-based low/high-pass filtering (SciPy)
+│       ├── hybrid.py            # Hybrid image creation (SciPy FFT)
+│       └── color_space.py       # RGB/Grayscale conversions & RGB histograms
+│
+├── Frontend/
+│   ├── index.html               # Landing page
+│   ├── operation.html           # Image processing workspace
+│   ├── project.html             # Project information page
+│   ├── css/                     # Stylesheets
+│   ├── js/
+│   │   ├── main.js              # Home page animations
+│   │   └── operation.js         # Core processing logic & API calls
+│   └── lib/                     # Third-party libraries (Bootstrap, jQuery, etc.)
+│
+├── assets/                      # README screenshots
+├── test_images/                 # Sample images for testing
+└── requirements.txt             # Python dependencies
+```
 
 ---
 
+## Key Design Decisions
 
-**Key design decisions:**
-
-- **Session-based state management** — Each upload creates a unique `session_id`. The server stores the original image, the current working image, and a full operation history in memory, enabling undo/reset without re-uploading.
-- **Base64 image transport** — Processed images are encoded as base64 strings and sent as JSON responses, eliminating the need for file serving or temporary storage on disk.
-- **Modular operations** — Each algorithm category lives in its own file under `operations/`, making it easy to add new operations or modify existing ones without touching the main server code.
+- **Session-based state** — each upload creates a unique `session_id` with the original image, working copy, and operation history stored in memory, enabling undo/reset without re-uploading.
+- **Base64 transport** — processed images are encoded as base64 strings in JSON responses, eliminating the need for file serving.
+- **Modular operations** — each algorithm category is in its own file under `operations/`, making it easy to add or modify operations independently.
 
 ---
-
 
 ## Quick Start
+
 ### 1️⃣ Clone the Repository
 
 ```bash
@@ -222,13 +210,12 @@ cd Computer_vision_task1
 ### 2️⃣ Create & Activate a Virtual Environment
 
 ```bash
-# Create the environment
 python -m venv venv
 
-# Activate — Windows
+# Windows
 venv\Scripts\activate
 
-# Activate — macOS / Linux
+# macOS / Linux
 source venv/bin/activate
 ```
 
@@ -239,14 +226,14 @@ pip install -r requirements.txt
 ```
 
 <details>
-<summary> <strong>Full dependency list</strong></summary>
+<summary><strong>Full dependency list</strong></summary>
 
 | Package            | Purpose                                      |
 | ------------------ | -------------------------------------------- |
-| `fastapi`          | Web framework for building the REST API      |
-| `uvicorn`          | ASGI server to run the FastAPI application   |
-| `opencv-python`    | Computer vision utilities (Canny, color space conversions) |
-| `numpy`            | Array math and algorithm implementations     |
+| `fastapi`          | Web framework for the REST API               |
+| `uvicorn`          | ASGI server to run FastAPI                   |
+| `opencv-python`    | Image processing & computer vision           |
+| `numpy`            | Array operations                             |
 | `scipy`            | FFT for frequency domain operations          |
 | `pillow`           | Image I/O utilities                          |
 | `python-multipart` | Parsing multipart form uploads               |
@@ -260,37 +247,29 @@ cd Backend
 uvicorn main:app --reload
 ```
 
-You should see:
-
-```
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process
-```
-
 ### 5️⃣ Open the Application
 
-Navigate to **http://127.0.0.1:8000** in your browser — you're ready to go!
+Navigate to **http://127.0.0.1:8000** in your browser.
 
-> ** Tip:** The `--reload` flag enables hot-reloading — the server automatically restarts when you modify any Python file, making development seamless.
-
----
-
-##  Usage Guide
-
-1. **Open** the application in your browser and navigate to the **Operations** page
-2. **Upload** an image — drag and drop it onto the upload area, or click to browse
-3. **Choose** an operation category from the tabs (Noise, Filters, Edge Detection, etc.)
-4. **Select** the specific algorithm and adjust parameters using the sliders
-5. **Apply** — click the apply button and watch the result appear instantly
-6. **Compare** — the original and processed images are displayed side by side
-7. **Chain** operations — apply multiple operations sequentially to build complex pipelines
-8. **Undo** the last operation or **Reset** to the original image at any time
+> **Tip:** The `--reload` flag enables hot-reloading during development.
 
 ---
 
-##  Contributors
+## Usage Guide
 
-This project was developed as part of a **Computer Vision** university course assignment, demonstrating practical implementation of classical image processing algorithms with a modern web interface.
+1. **Open** the app and navigate to the **Operations** page
+2. **Upload** an image via drag-and-drop or file browser
+3. **Choose** an operation category from the tabs
+4. **Adjust** parameters with sliders and inputs
+5. **Apply** the operation — results appear instantly
+6. **Chain** multiple operations sequentially
+7. **Undo** the last operation or **Reset** to the original at any time
+
+---
+
+## Contributors
+
+This project was developed as part of a **Computer Vision** university course assignment.
 
 ---
 
