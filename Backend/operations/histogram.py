@@ -6,22 +6,6 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
-def calculate_histogram(image, bins=256):
-    """Calculate histogram for grayscale image"""
-    if len(image.shape) == 3:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image.copy()
-    
-    hist = cv2.calcHist([gray], [0], None, [bins], [0, 256])
-    return hist.flatten()
-
-def calculate_cdf(hist):
-    """Calculate Cumulative Distribution Function from histogram"""
-    cdf = hist.cumsum()
-    cdf_normalized = cdf / cdf.max()
-    return cdf_normalized
-
 def draw_histogram(image, title="Histogram", bins=256):
     """Draw histogram and CDF for image"""
     if len(image.shape) == 3:
