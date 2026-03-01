@@ -33,6 +33,7 @@ def sobel_edge(image):
     # Normalize gradients
     grad_x = np.abs(grad_x)
     grad_x = (grad_x / grad_x.max() * 255).astype(np.uint8)
+    grad_y = np.abs(grad_y)
     grad_y = (grad_y / grad_y.max() * 255).astype(np.uint8)
     
     return magnitude, grad_x, grad_y
@@ -65,6 +66,7 @@ def roberts_edge(image):
     
     grad_x = np.abs(grad_x)
     grad_x = (grad_x / grad_x.max() * 255).astype(np.uint8) if grad_x.max() > 0 else grad_x
+    grad_y = np.abs(grad_y)
     grad_y = (grad_y / grad_y.max() * 255).astype(np.uint8) if grad_y.max() > 0 else grad_y
     
     return magnitude, grad_x, grad_y
@@ -99,6 +101,7 @@ def prewitt_edge(image):
     
     grad_x = np.abs(grad_x)
     grad_x = (grad_x / grad_x.max() * 255).astype(np.uint8)
+    grad_y = np.abs(grad_y)
     grad_y = (grad_y / grad_y.max() * 255).astype(np.uint8)
     
     return magnitude, grad_x, grad_y
@@ -115,18 +118,19 @@ def canny_edge(image, threshold1=100, threshold2=200):
     edges = cv2.Canny(gray, threshold1, threshold2)
     return edges
 
-def convolve2d_edge(image, kernel, pad=1):
-    """Helper function for edge detection convolution"""
-    h, w = image.shape
-    kernel_size = kernel.shape[0]
-    pad_size = pad
-    
-    padded = np.pad(image, pad_size, mode='edge')
-    result = np.zeros_like(image, dtype=np.float32)
-    
-    for i in range(h):
-        for j in range(w):
-            region = padded[i:i+kernel_size, j:j+kernel_size]
-            result[i, j] = np.sum(region * kernel)
+import cv2
+import numpy as np
+
+def convolve2d_edge(image, kernel):
+    """
+    Apply 2D convolution using OpenCV (replaces manual convolution)
+    Returns:
+    - convolved image as float32
+    """
+   
+    image_float = image.astype(np.float32)
+    result = cv2.filter2D(image_float, ddepth=-1, kernel=kernel, borderType=cv2.BORDER_REPLICATE)
     
     return result
+
+
