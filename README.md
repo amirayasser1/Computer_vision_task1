@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🖼️ ImagePro
+# <img src="Frontend/img/logo-cv.png" width="50" alt="ImagePro Home Page"> ImagePro
 
 ### Real-Time Image Processing Web Application
 
@@ -17,15 +17,15 @@
 
 What makes this project unique is that **nearly every algorithm is implemented from scratch** using raw NumPy and SciPy operations — no black-box OpenCV calls for the core processing. This makes the codebase an excellent learning resource for anyone studying computer vision fundamentals.
 
-[🚀 Getting Started](#-quick-start) · [✨ Features](#-features--demos) · [🔌 API Reference](#-api-endpoints) · [📁 Project Structure](#-project-structure)
+[Getting Started](#-quick-start) · [ Features](#-features--demos) · [ API Reference](#-api-endpoints) · [ Project Structure](#-project-structure)
 
 </div>
 
 ---
 
-## 📸 Application Preview
+##  Application Preview
 
-### 🏠 Home Page
+### Home Page
 
 The landing page features a modern, responsive design with animated sections, a feature overview, and a team carousel. It introduces users to the application and its capabilities before they dive into the processing workspace.
 
@@ -35,7 +35,7 @@ The landing page features a modern, responsive design with animated sections, a 
 
 ---
 
-### ⚙️ Operations Workspace
+###  Operations Workspace
 
 The operations page is the heart of the application — a split-panel workspace where the **original image** and the **processed result** are displayed side by side. A tabbed control panel on the left lets users switch between operation categories, adjust parameters through sliders and dropdowns, and apply transformations with a single click. Every operation supports **undo** and **reset**, so users can freely experiment without losing their original image.
 
@@ -49,13 +49,13 @@ The operations page is the heart of the application — a split-panel workspace 
 
 ---
 
-## ✨ Features & Demos
+##  Features & Demos
 
 ImagePro covers the full spectrum of classical image processing, organized into seven operation categories. Each section below explains **what the operation does**, **why it's useful**, and **how it's implemented** under the hood.
 
 ---
 
-### 🧂 1. Noise Generation
+###  1. Noise Generation
 
 > **What it does:** Artificially degrades an image by injecting random disturbances into pixel values.
 
@@ -77,7 +77,7 @@ All three noise functions are **implemented from scratch** using `numpy.random`.
 
 ---
 
-### 🔲 2. Spatial Filters
+###  2. Spatial Filters
 
 > **What it does:** Smooths, blurs, or denoises images by sliding a small window (kernel) across every pixel and computing a new value from its neighbors.
 
@@ -99,7 +99,7 @@ Users can adjust the **kernel size** (3×3, 5×5, 7×7, etc.) to control filter 
 
 ---
 
-### 📐 3. Edge Detection
+###  3. Edge Detection
 
 > **What it does:** Identifies boundaries in images where brightness changes rapidly — revealing the outlines and structure of objects.
 
@@ -122,7 +122,7 @@ For Sobel, Roberts, and Prewitt, the app returns **three images**: the combined 
 
 ---
 
-### 📊 4. Histogram Analysis & Visualization
+###  4. Histogram Analysis & Visualization
 
 > **What it does:** Computes and displays the distribution of pixel intensities in an image — a fundamental tool for understanding image exposure, contrast, and color balance.
 
@@ -155,7 +155,7 @@ Both the histogram computation and the CDF calculation are **implemented from sc
 
 ---
 
-### ✨ 5. Image Enhancement
+###  5. Image Enhancement
 
 > **What it does:** Improves the visual quality and contrast of images through pixel-value transformations.
 
@@ -167,7 +167,7 @@ Both the histogram computation and the CDF calculation are **implemented from sc
 
 ---
 
-### 🌀 6. Frequency Domain Filtering
+### 6. Frequency Domain Filtering
 
 > **What it does:** Transforms the image into the frequency domain using the **Fast Fourier Transform (FFT)**, applies a circular filter mask, and converts back — enabling powerful global operations that are difficult to achieve in the spatial domain.
 
@@ -188,7 +188,7 @@ The `cutoff` slider controls the radius of the circular mask — a smaller radiu
 
 ---
 
-### 🖼️ 7. Hybrid Image Creation
+###  7. Hybrid Image Creation
 
 > **What it does:** Combines the **low-frequency content** of one image with the **high-frequency content** of another to create a single image that looks different depending on viewing distance.
 
@@ -201,102 +201,6 @@ The implementation extracts low frequencies from image 1 and high frequencies fr
 
 ---
 
-## 🛠️ Tech Stack
-
-<div align="center">
-
-| Layer            | Technologies                                                                      |
-| ---------------- | --------------------------------------------------------------------------------- |
-| **Backend**      | Python · FastAPI · Uvicorn · python-multipart                                     |
-| **Frontend**     | HTML5 · CSS3 · Vanilla JavaScript · Bootstrap 5 · jQuery                          |
-| **Computer Vision** | OpenCV · NumPy · SciPy (FFT) · Pillow · Matplotlib                            |
-| **UI Libraries** | Owl Carousel · WOW.js · Animate.css                                               |
-
-</div>
-
----
-
-## 📁 Project Structure
-
-```
-Computer_vision_task1/
-│
-├── 📂 Backend/                          # Python server — the processing engine
-│   ├── main.py                          # FastAPI app, routes, session management
-│   └── 📂 operations/                   # Modular algorithm implementations
-│       ├── __init__.py                  # Package initializer — exports all functions
-│       ├── noise.py                     # Gaussian, Uniform, Salt & Pepper noise
-│       ├── filters.py                   # Average, Gaussian, Median spatial filters
-│       ├── edge_detection.py            # Sobel, Roberts, Prewitt, Canny edge detectors
-│       ├── histogram.py                 # Histogram computation, CDF, visualization
-│       ├── enhancement.py               # Equalization, normalization, grayscale
-│       ├── frequency.py                 # FFT-based low/high-pass filtering
-│       ├── hybrid.py                    # Hybrid image creation via frequency blending
-│       └── color_space.py               # RGB↔Gray conversion, per-channel histograms
-│
-├── 📂 Frontend/                         # Browser-based user interface
-│   ├── index.html                       # Landing page — hero, features, team carousel
-│   ├── operation.html                   # Main workspace — upload, process, visualize
-│   ├── project.html                     # Project information & documentation page
-│   ├── 📂 css/                          # Custom stylesheets
-│   ├── 📂 js/
-│   │   ├── main.js                      # Home page animations (WOW.js, counters, carousel)
-│   │   └── operation.js                 # Core logic — API calls, DOM updates, state mgmt
-│   ├── 📂 lib/                          # Third-party libraries (Bootstrap, jQuery, etc.)
-│   └── 📂 img/                          # Static images and icons
-│
-├── 📂 assets/                           # Screenshots and demo media for README
-├── 📂 test_images/                      # Sample images for quick testing
-├── requirements.txt                     # Python dependencies
-└── README.md                            # You are here!
-```
-
----
-
-## 🏗️ Architecture
-
-The application follows a clean **client-server** architecture with a RESTful API layer:
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              USER'S BROWSER                                │
-│                                                                             │
-│   index.html          operation.html          project.html                  │
-│   (Landing Page)      (Processing UI)         (Info Page)                   │
-│                             │                                               │
-│                     operation.js                                            │
-│                     ┌───────┴────────┐                                      │
-│                     │  Upload Image  │                                      │
-│                     │  Select Op     │                                      │
-│                     │  Adjust Params │                                      │
-│                     │  Display Result│                                      │
-│                     └───────┬────────┘                                      │
-└─────────────────────────────┼───────────────────────────────────────────────┘
-                              │  HTTP POST (FormData)
-                              ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            FastAPI SERVER                                   │
-│                                                                             │
-│   main.py                                                                   │
-│   ┌─────────────────────────────────────────────────┐                       │
-│   │  /upload   →  Read image, create session        │                       │
-│   │  /undo     →  Pop last state from history       │                       │
-│   │  /reset    →  Restore original image            │                       │
-│   │  /add_noise, /apply_filter, /edge_detection,    │                       │
-│   │  /histogram, /enhancement, /frequency, /hybrid  │                       │
-│   └────────────────────┬────────────────────────────┘                       │
-│                        │                                                    │
-│   operations/          ▼                                                    │
-│   ┌────────────────────────────────────────────┐                            │
-│   │  noise.py  │ filters.py │ edge_detection.py│                            │
-│   │  histogram.py │ enhancement.py │ frequency.py│                          │
-│   │  hybrid.py │ color_space.py                 │                           │
-│   └────────────────────────────────────────────┘                            │
-│                        │                                                    │
-│                        ▼                                                    │
-│              Returns base64-encoded image(s) as JSON                        │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
 
 **Key design decisions:**
 
@@ -306,51 +210,8 @@ The application follows a clean **client-server** architecture with a RESTful AP
 
 ---
 
-## 🔌 API Endpoints
 
-All endpoints accept `multipart/form-data` and return JSON responses.
-
-| Method | Endpoint          | Parameters                                                   | Response                        |
-| ------ | ----------------- | ------------------------------------------------------------ | ------------------------------- |
-| `POST` | `/upload`         | `file` (image)                                               | `session_id`, `image` (base64)  |
-| `POST` | `/undo`           | `session_id`                                                 | `image` (base64)                |
-| `POST` | `/reset`          | `session_id`                                                 | `image` (base64)                |
-| `POST` | `/add_noise`      | `session_id`, `noise_type`, `mean`, `sigma`, `ratio`         | `image` (base64)                |
-| `POST` | `/apply_filter`   | `session_id`, `filter_type`, `kernel_size`, `sigma`          | `image` (base64)                |
-| `POST` | `/edge_detection` | `session_id`, `edge_type`, `threshold1`, `threshold2`        | `image`, `grad_x`, `grad_y` (base64) |
-| `POST` | `/histogram`      | `session_id`, `hist_type`                                    | `histogram` (base64 plot)       |
-| `POST` | `/enhancement`    | `session_id`, `enhance_type`, `range_type`                   | `image` (base64)                |
-| `POST` | `/frequency`      | `session_id`, `filter_type`, `cutoff`                        | `image`, `visualization` (base64) |
-| `POST` | `/hybrid`         | `file1`, `file2`, `cutoff_low`, `cutoff_high`                | `hybrid`, `low_freq`, `high_freq` (base64) |
-| `GET`  | `/health`         | —                                                            | `{ "status": "healthy" }`       |
-
----
-
-## 🧮 Algorithms Summary
-
-| Category                | Algorithms                                                  | Implementation       |
-| ----------------------- | ----------------------------------------------------------- | -------------------- |
-| **Noise Generation**    | Gaussian · Uniform · Salt & Pepper                          | ✅ From scratch       |
-| **Spatial Filters**     | Average · Gaussian · Median (with manual 2D convolution)    | ✅ From scratch       |
-| **Edge Detection**      | Sobel · Roberts · Prewitt                                   | ✅ From scratch       |
-| **Edge Detection**      | Canny (multi-stage pipeline)                                | 🔧 OpenCV            |
-| **Histogram**           | Grayscale histogram · RGB per-channel · CDF                 | ✅ From scratch       |
-| **Enhancement**         | Histogram Equalization · Normalization · Grayscale          | ✅ From scratch       |
-| **Frequency Filtering** | Low-pass · High-pass (FFT + circular mask)                  | ✅ From scratch       |
-| **Hybrid Images**       | Multi-frequency blending of two images                      | ✅ From scratch       |
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-| Requirement       | Version     |
-| ----------------- | ----------- |
-| Python             | 3.8+        |
-| pip                | Latest      |
-| Web Browser        | Chrome, Firefox, Edge, or Safari |
-
+## Quick Start
 ### 1️⃣ Clone the Repository
 
 ```bash
@@ -378,7 +239,7 @@ pip install -r requirements.txt
 ```
 
 <details>
-<summary>📦 <strong>Full dependency list</strong></summary>
+<summary> <strong>Full dependency list</strong></summary>
 
 | Package            | Purpose                                      |
 | ------------------ | -------------------------------------------- |
@@ -410,11 +271,11 @@ INFO:     Started reloader process
 
 Navigate to **http://127.0.0.1:8000** in your browser — you're ready to go!
 
-> **💡 Tip:** The `--reload` flag enables hot-reloading — the server automatically restarts when you modify any Python file, making development seamless.
+> ** Tip:** The `--reload` flag enables hot-reloading — the server automatically restarts when you modify any Python file, making development seamless.
 
 ---
 
-## 📖 Usage Guide
+##  Usage Guide
 
 1. **Open** the application in your browser and navigate to the **Operations** page
 2. **Upload** an image — drag and drop it onto the upload area, or click to browse
@@ -427,15 +288,13 @@ Navigate to **http://127.0.0.1:8000** in your browser — you're ready to go!
 
 ---
 
-## 👥 Contributors
+##  Contributors
 
 This project was developed as part of a **Computer Vision** university course assignment, demonstrating practical implementation of classical image processing algorithms with a modern web interface.
 
 ---
 
 <div align="center">
-
-Made with ❤️ and Computer Vision
 
 **⭐ Star this repository if you found it helpful!**
 
