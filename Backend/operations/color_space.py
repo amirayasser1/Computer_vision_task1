@@ -20,40 +20,46 @@ def rgb_to_grayscale(image):
 
 def plot_rgb_histograms(image):
     """
-    Plot individual R, G, B histograms and a combined overlay.
+    Plot individual R, G, B histograms and their Cumulative Distribution Functions (CDFs).
     Returns a base64-encoded PNG string, or None if the image is grayscale.
     """
     if len(image.shape) == 2:
         return None
 
     colors = ('b', 'g', 'r')
-    plt.figure(figsize=(12, 8))
+    color_names = ('Blue', 'Green', 'Red')
+    plt.figure(figsize=(18, 10))
 
-    # Compute histograms once, reuse for both individual and combined plots
+    # Compute histograms and CDFs
     histograms = []
+    cdfs = []
     for i in range(3):
-        histograms.append(cv2.calcHist([image], [i], None, [256], [0, 256]))
+        hist = cv2.calcHist([image], [i], None, [256], [0, 256])
+        histograms.append(hist)
+        
+        cdf = hist.cumsum()
+        cdfs.append(cdf / cdf.max())
 
-    # Individual channel subplots
     for i, color in enumerate(colors):
-        plt.subplot(2, 2, i + 1)
+        # Top Row: Histogram
+        plt.subplot(2, 3, i + 1)
         plt.plot(histograms[i], color=color, linewidth=2)
-        plt.title(f'{color.upper()} Channel Histogram')
+        plt.title(f'{color_names[i]} Channel Histogram')
         plt.xlabel('Pixel Value')
         plt.ylabel('Frequency')
         plt.grid(True, alpha=0.3)
         plt.xlim([0, 256])
 
-    # Combined overlay subplot
-    plt.subplot(2, 2, 4)
-    for i, color in enumerate(colors):
-        plt.plot(histograms[i], color=color, linewidth=1.5, label=f'{color.upper()} channel')
-    plt.title('Combined RGB Histogram')
-    plt.xlabel('Pixel Value')
-    plt.ylabel('Frequency')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.xlim([0, 256])
+        # Bottom Row: CDF
+        plt.subplot(2, 3, i + 4)
+        plt.plot(cdfs[i], color=color, linewidth=2)
+        plt.fill_between(range(256), cdfs[i].flatten(), color=color, alpha=0.2)
+        plt.title(f'{color_names[i]} Channel CDF')
+        plt.xlabel('Pixel Value')
+        plt.ylabel('Cumulative Probability')
+        plt.grid(True, alpha=0.3)
+        plt.xlim([0, 256])
+        plt.ylim([0, 1.05])
 
     plt.tight_layout()
     return fig_to_base64()
