@@ -44,6 +44,11 @@ def read_image(file: UploadFile):
     contents = file.file.read()
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    
+    # Check if the image is actually grayscale (R == G == B)
+    if np.array_equal(img[:,:,0], img[:,:,1]) and np.array_equal(img[:,:,1], img[:,:,2]):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        
     return img
 
 def image_to_base64(image):
