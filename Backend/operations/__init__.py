@@ -4,25 +4,24 @@ from .edge_detection import sobel_edge, roberts_edge, prewitt_edge, canny_edge
 from .histogram import draw_histogram
 from .enhancement import histogram_equalization, normalize_image
 from .color_space import rgb_to_grayscale, plot_rgb_histograms, plot_distribution_function
-from .frequency import  apply_frequency_filter
+from .frequency import apply_frequency_filter
 from .hybrid import create_hybrid_image
 
 __all__ = [
-    'add_noise', 
-    'apply_average_filter', 
-    'apply_gaussian_filter', 
+    'add_noise',
+    'apply_average_filter',
+    'apply_gaussian_filter',
     'apply_median_filter',
-    'sobel_edge', 
-    'roberts_edge', 
-    'prewitt_edge', 
+    'sobel_edge',
+    'roberts_edge',
+    'prewitt_edge',
     'canny_edge',
     'draw_histogram',
-    'histogram_equalization', 
+    'histogram_equalization',
     'normalize_image',
-    'rgb_to_grayscale', 
+    'rgb_to_grayscale',
     'plot_rgb_histograms',
     'plot_distribution_function',
-     
     'apply_frequency_filter',
     'create_hybrid_image'
 ]

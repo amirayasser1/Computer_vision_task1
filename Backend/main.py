@@ -252,6 +252,11 @@ async def histogram_endpoint(
             'cdf': cdf_img
         })
     elif hist_type == 'rgb':
+        if len(img.shape) == 2:
+            raise HTTPException(
+                status_code=400,
+                detail="Cannot generate RGB histogram for a grayscale image. Please reset the image or upload a color image."
+            )
         rgb_hist = plot_rgb_histograms(img)
         return JSONResponse({
             'rgb_histogram': rgb_hist
