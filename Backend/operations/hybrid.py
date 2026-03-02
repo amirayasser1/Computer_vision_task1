@@ -22,10 +22,10 @@ def create_hybrid_image(image1, image2, cutoff_low=30, cutoff_high=10):
         img2_gray = cv2.resize(img2_gray, (img1_gray.shape[1], img1_gray.shape[0]))
     
     # Get low frequency components of image1
-    low_freq = get_low_frequencies(img1_gray, cutoff_low)
+    low_freq,_,_,_ = get_frequencies(img1_gray, cutoff_low, type = 'low')
     
     # Get high frequency components of image2
-    high_freq = get_high_frequencies(img2_gray, cutoff_high)
+    high_freq,_,_,_ = get_frequencies(img2_gray, cutoff_high, type = 'high')
     
     # Combine
     hybrid = cv2.addWeighted(low_freq, 0.5, high_freq, 0.5, 0)
@@ -40,29 +40,7 @@ def create_hybrid_image(image1, image2, cutoff_low=30, cutoff_high=10):
         'high_freq': high_display.astype(np.uint8)
     }
 
-def get_low_frequencies(image, cutoff):
-    """Extract low frequency components"""
-    f = fftpack.fft2(image.astype(np.float32))
-    fshift = fftpack.fftshift(f)
-    
-    rows, cols = image.shape
-    crow, ccol = rows // 2, cols // 2
-    
-    # Create low-pass mask
-    y, x = np.ogrid[:rows, :cols]
-    distance = np.sqrt((x - ccol)**2 + (y - crow)**2)
-    mask = distance <= cutoff
-    
-    fshift_filtered = fshift * mask
-    
-    # Inverse FFT
-    f_ishift = fftpack.ifftshift(fshift_filtered)
-    img_filtered = fftpack.ifft2(f_ishift)
-    img_filtered = np.abs(img_filtered)
-    
-    return img_filtered
-
-def get_high_frequencies(image, cutoff):
+def get_frequencies(image, cutoff, type = 'low', idx = 0):
     """Extract high frequency components"""
     f = fftpack.fft2(image.astype(np.float32))
     fshift = fftpack.fftshift(f)
@@ -73,13 +51,23 @@ def get_high_frequencies(image, cutoff):
     # Create high-pass mask
     y, x = np.ogrid[:rows, :cols]
     distance = np.sqrt((x - ccol)**2 + (y - crow)**2)
-    mask = distance > cutoff
+
+    if type == 'low':
+        mask = distance <= cutoff
+    elif type == 'high':
+        mask = distance > cutoff
     
     fshift_filtered = fshift * mask
+
+    # Spectrums
+    # Save original magnitude spectrum (only once)
+    # not used here used in frequency.py
+    spectrum = 20 * np.log(np.abs(fshift) + 1)
+    filtered_spectrum = 20 * np.log(np.abs(fshift_filtered) + 1)
     
     # Inverse FFT
     f_ishift = fftpack.ifftshift(fshift_filtered)
     img_filtered = fftpack.ifft2(f_ishift)
     img_filtered = np.abs(img_filtered)
     
-    return img_filtered
+    return img_filtered, spectrum, filtered_spectrum, mask    
