@@ -14,9 +14,8 @@ from PIL import Image
 from operations.noise import add_noise
 from operations.filters import apply_average_filter, apply_gaussian_filter, apply_median_filter
 from operations.edge_detection import sobel_edge, roberts_edge, prewitt_edge, canny_edge
-from operations.histogram import draw_histogram
-from operations.enhancement import histogram_equalization, normalize_image
-from operations.color_space import rgb_to_grayscale, plot_rgb_histograms, plot_distribution_function as color_plot_distribution
+from operations.histograms import draw_histogram, plot_rgb_histograms, plot_rgb_cdfs, plot_distribution_function as color_plot_distribution
+from operations.enhancement import histogram_equalization, normalize_image, rgb_to_grayscale
 from operations.frequency import apply_frequency_filter
 from operations.hybrid import create_hybrid_image
 
@@ -258,8 +257,10 @@ async def histogram_endpoint(
                 detail="Cannot generate RGB histogram for a grayscale image. Please reset the image or upload a color image."
             )
         rgb_hist = plot_rgb_histograms(img)
+        rgb_cdf = plot_rgb_cdfs(img)
         return JSONResponse({
-            'rgb_histogram': rgb_hist
+            'rgb_histogram': rgb_hist,
+            'rgb_cdf': rgb_cdf
         })
     else:
         raise HTTPException(status_code=400, detail="Invalid histogram type")

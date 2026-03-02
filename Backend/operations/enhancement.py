@@ -2,6 +2,18 @@ import numpy as np
 import cv2
 
 
+def rgb_to_grayscale(image):
+    """
+    Convert RGB to Grayscale using the perceptual luminance formula.
+    Weights: 0.299*R + 0.587*G + 0.114*B
+    """
+    if len(image.shape) == 2:
+        return image
+
+    gray = np.dot(image[..., :3], [0.299, 0.587, 0.114])
+    return gray.astype(np.uint8)
+
+
 def histogram_equalization(image):
     """
     Apply histogram equalization to improve contrast.

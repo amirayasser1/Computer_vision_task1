@@ -6,21 +6,35 @@ import matplotlib.pyplot as plt
 from .utils import fig_to_base64
 
 
-def rgb_to_grayscale(image):
+def draw_histogram(image, title="Histogram", bins=256):
     """
-    Convert RGB to Grayscale using the perceptual luminance formula.
-    Weights: 0.299*R + 0.587*G + 0.114*B
+    Draw a grayscale histogram for the given image.
+    Returns a base64-encoded PNG string.
     """
-    if len(image.shape) == 2:
-        return image
+    # Convert to grayscale if color
+    if len(image.shape) == 3:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image.copy()
 
-    gray = np.dot(image[..., :3], [0.299, 0.587, 0.114])
-    return gray.astype(np.uint8)
+    # Create figure
+    plt.figure(figsize=(10, 6))
+
+    # Histogram
+    plt.hist(gray.ravel(), bins, [0, 256], color='blue', alpha=0.7)
+    plt.title(f'{title}')
+    plt.xlabel('Pixel Value')
+    plt.ylabel('Frequency')
+    plt.grid(True, alpha=0.3)
+    plt.xlim([0, 256])
+
+    plt.tight_layout()
+    return fig_to_base64()
 
 
 def plot_rgb_histograms(image):
     """
-    Plot individual R, G, B histograms and their Cumulative Distribution Functions (CDFs).
+    Plot individual R, G, B histograms.
     Returns a base64-encoded PNG string, or None if the image is grayscale.
     """
     if len(image.shape) == 2:
@@ -28,32 +42,43 @@ def plot_rgb_histograms(image):
 
     colors = ('b', 'g', 'r')
     color_names = ('Blue', 'Green', 'Red')
-    plt.figure(figsize=(18, 10))
-
-    # Compute histograms and CDFs
-    histograms = []
-    cdfs = []
-    for i in range(3):
-        hist = cv2.calcHist([image], [i], None, [256], [0, 256])
-        histograms.append(hist)
-        
-        cdf = hist.cumsum()
-        cdfs.append(cdf / cdf.max())
+    plt.figure(figsize=(18, 5))
 
     for i, color in enumerate(colors):
-        # Top Row: Histogram
-        plt.subplot(2, 3, i + 1)
-        plt.plot(histograms[i], color=color, linewidth=2)
+        hist = cv2.calcHist([image], [i], None, [256], [0, 256])
+        
+        plt.subplot(1, 3, i + 1)
+        plt.plot(hist, color=color, linewidth=2)
         plt.title(f'{color_names[i]} Channel Histogram')
         plt.xlabel('Pixel Value')
         plt.ylabel('Frequency')
         plt.grid(True, alpha=0.3)
         plt.xlim([0, 256])
 
-        # Bottom Row: CDF
-        plt.subplot(2, 3, i + 4)
-        plt.plot(cdfs[i], color=color, linewidth=2)
-        plt.fill_between(range(256), cdfs[i].flatten(), color=color, alpha=0.2)
+    plt.tight_layout()
+    return fig_to_base64()
+
+
+def plot_rgb_cdfs(image):
+    """
+    Plot individual R, G, B Cumulative Distribution Functions (CDFs).
+    Returns a base64-encoded PNG string, or None if the image is grayscale.
+    """
+    if len(image.shape) == 2:
+        return None
+
+    colors = ('b', 'g', 'r')
+    color_names = ('Blue', 'Green', 'Red')
+    plt.figure(figsize=(18, 5))
+
+    for i, color in enumerate(colors):
+        hist = cv2.calcHist([image], [i], None, [256], [0, 256])
+        cdf = hist.cumsum()
+        cdf_normalized = cdf / cdf.max()
+
+        plt.subplot(1, 3, i + 1)
+        plt.plot(cdf_normalized, color=color, linewidth=2)
+        plt.fill_between(range(256), cdf_normalized.flatten(), color=color, alpha=0.2)
         plt.title(f'{color_names[i]} Channel CDF')
         plt.xlabel('Pixel Value')
         plt.ylabel('Cumulative Probability')
