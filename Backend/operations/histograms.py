@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from .utils import fig_to_base64
+from .enhancement import rgb_to_grayscale
 
 
 def draw_histogram(image, title="Histogram", bins=256):
@@ -12,10 +13,7 @@ def draw_histogram(image, title="Histogram", bins=256):
     Returns a base64-encoded PNG string.
     """
     # Convert to grayscale if color
-    if len(image.shape) == 3:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image.copy()
+    gray = rgb_to_grayscale(image)
 
     # Create figure
     plt.figure(figsize=(10, 6))
@@ -96,10 +94,7 @@ def plot_distribution_function(image):
     Returns a base64-encoded PNG string.
     """
     # Convert to grayscale if color
-    if len(image.shape) == 3:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image.copy()
+    gray = rgb_to_grayscale(image)
 
     # Compute histogram and CDF
     hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
